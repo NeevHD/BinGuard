@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BinGuard — Smart Waste Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0f0a;
+  --bg2: #111811;
+  --bg3: #182018;
+  --surface: #1e271e;
+  --surface2: #243024;
+  --border: #2d3d2d;
+  --green: #4ade80;
+  --green-dim: #22c55e;
+  --green-dark: #16a34a;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --red-dark: #ef4444;
+  --blue: #60a5fa;
+  --text: #e8f0e8;
+  --text2: #9db09d;
+  --text3: #5a6e5a;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo{font-family:var(--display);font-weight:800;font-size:22px;color:var(--green);letter-spacing:-0.5px;display:flex;align-items:center;gap:8px;}
+.logo span{font-size:20px;}
+.nav-tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px;}
+.nav-tab{padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);transition:all .2s;border:none;background:none;font-family:var(--sans);}
+.nav-tab.active{background:var(--surface2);color:var(--green);border:1px solid var(--border);}
+.nav-tab:hover:not(.active){color:var(--text);}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(74,222,128,.4);}50%{opacity:.8;box-shadow:0 0 0 6px rgba(74,222,128,0);}}
+
+/* PANELS */
+.panel{display:none;animation:fadeIn .3s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ==================== LANDING ==================== */
+#panel-home{padding:0;}
+.hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 32px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%, rgba(74,222,128,.06) 0%, transparent 70%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.3;pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-size:12px;color:var(--text2);font-family:var(--mono);margin-bottom:32px;letter-spacing:.5px;}
+.hero h1{font-family:var(--display);font-size:clamp(52px,8vw,96px);font-weight:800;line-height:.95;letter-spacing:-3px;margin-bottom:24px;}
+.hero h1 .accent{color:var(--green);display:block;}
+.hero p{font-size:18px;color:var(--text2);max-width:540px;line-height:1.7;margin-bottom:48px;}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{background:var(--green);color:#000;font-weight:700;padding:14px 32px;border-radius:100px;border:none;cursor:pointer;font-size:15px;font-family:var(--sans);transition:all .2s;letter-spacing:-.2px;}
+.btn-primary:hover{background:#6ee7a0;transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--text);font-weight:500;padding:14px 32px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-size:15px;font-family:var(--sans);transition:all .2s;}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);}
+.stats-row{display:flex;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0;}
+.stat-item{flex:1;padding:32px;text-align:center;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:var(--display);font-size:40px;font-weight:800;color:var(--green);}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px;}
+.features{padding:80px 32px;max-width:1100px;margin:0 auto;}
+.features-title{font-family:var(--display);font-size:36px;font-weight:800;margin-bottom:48px;text-align:center;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;transition:border-color .2s;}
+.feature-card:hover{border-color:var(--green-dim);}
+.feature-icon{width:48px;height:48px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.feature-card h3{font-family:var(--display);font-size:18px;font-weight:700;margin-bottom:8px;}
+.feature-card p{font-size:14px;color:var(--text2);line-height:1.6;}
+
+/* ==================== KIOSK ==================== */
+#panel-kiosk{padding:32px;max-width:600px;margin:0 auto;}
+.kiosk-screen{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.kiosk-header{background:var(--surface);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.kiosk-header h2{font-family:var(--display);font-size:18px;font-weight:700;}
+.kiosk-time{font-family:var(--mono);font-size:13px;color:var(--text2);}
+.kiosk-body{padding:32px;}
+
+/* Steps */
+.steps{display:flex;gap:0;margin-bottom:32px;}
+.step{flex:1;display:flex;align-items:center;gap:8px;}
+.step-num{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--mono);color:var(--text3);flex-shrink:0;transition:all .3s;}
+.step-label{font-size:12px;color:var(--text3);transition:all .3s;}
+.step.active .step-num{background:var(--green);border-color:var(--green);color:#000;font-weight:700;}
+.step.active .step-label{color:var(--text);}
+.step.done .step-num{background:var(--surface2);border-color:var(--green-dim);color:var(--green);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 4px;}
+
+/* Kiosk steps */
+.kiosk-step{display:none;}
+.kiosk-step.active{display:block;animation:fadeIn .3s ease;}
+
+/* Step 0: Capacity */
+.capacity-display{text-align:center;padding:24px 0;}
+.big-icon{font-size:64px;margin-bottom:16px;}
+.capacity-bar-wrap{background:var(--surface);border-radius:100px;height:16px;margin:20px 0;overflow:hidden;}
+.capacity-bar{height:100%;border-radius:100px;transition:width .5s,background .5s;}
+.capacity-pct{font-family:var(--mono);font-size:32px;font-weight:700;margin-bottom:8px;}
+.capacity-msg{font-size:15px;color:var(--text2);margin-bottom:24px;}
+.bin-select-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.bin-chip{padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:13px;cursor:pointer;transition:all .2s;font-family:var(--mono);}
+.bin-chip.selected,.bin-chip:hover{border-color:var(--green);color:var(--green);}
+
+/* Category */
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;}
+.cat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;text-align:center;transition:all .2s;}
+.cat-card:hover,.cat-card.selected{border-color:var(--green);background:var(--surface2);}
+.cat-card .cat-icon{font-size:32px;margin-bottom:8px;}
+.cat-card .cat-name{font-size:14px;font-weight:600;}
+.cat-card .cat-desc{font-size:12px;color:var(--text2);margin-top:4px;}
+
+/* Item search */
+.search-box{display:flex;gap:8px;margin-bottom:20px;}
+.search-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:15px;color:var(--text);font-family:var(--sans);outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--green);}
+.search-btn{background:var(--green);color:#000;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-weight:700;font-size:14px;font-family:var(--sans);transition:all .2s;}
+.search-btn:hover{background:#6ee7a0;}
+.ai-result{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+.ai-label{font-size:11px;color:var(--green);font-family:var(--mono);margin-bottom:8px;letter-spacing:.5px;}
+.ai-item-name{font-size:16px;font-weight:600;margin-bottom:4px;}
+.ai-cat-tag{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:12px;color:var(--green);}
+.loading-dots{display:inline-flex;gap:4px;}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+
+/* Dispose */
+.dispose-success{text-align:center;padding:32px 0;}
+.success-circle{width:80px;height:80px;border-radius:50%;background:rgba(74,222,128,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;animation:popIn .4s ease;}
+@keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+.full-alert{background:rgba(248,113,113,.1);border:1px solid var(--red-dark);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:20px;}
+.full-alert h3{color:var(--red);font-family:var(--display);font-size:20px;margin-bottom:8px;}
+.full-alert p{font-size:14px;color:var(--text2);}
+
+/* Kiosk nav btns */
+.kiosk-nav{display:flex;gap:12px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border);}
+.k-btn{padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .2s;border:none;}
+.k-btn-back{background:var(--surface);color:var(--text2);}
+.k-btn-next{background:var(--green);color:#000;}
+.k-btn:hover{opacity:.85;}
+.k-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ==================== ADMIN ==================== */
+#panel-admin{padding:0;}
+.admin-layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 57px);}
+.admin-sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;}
+.sidebar-section{padding:8px 16px;font-size:11px;font-family:var(--mono);color:var(--text3);letter-spacing:.5px;margin-top:16px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--text2);border-left:2px solid transparent;}
+.sidebar-item:hover{color:var(--text);background:var(--surface);}
+.sidebar-item.active{color:var(--green);background:var(--surface);border-left-color:var(--green);}
+.sidebar-item .s-icon{font-size:16px;width:20px;}
+.badge-count{margin-left:auto;background:var(--red);color:#fff;font-size:11px;padding:2px 8px;border-radius:100px;font-family:var(--mono);}
+
+.admin-main{overflow-y:auto;}
+.admin-sub{display:none;}
+.admin-sub.active{display:block;animation:fadeIn .3s ease;}
+
+/* Admin topbar */
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid var(--border);}
+.admin-topbar h2{font-family:var(--display);font-size:22px;font-weight:700;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.tb-btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .2s;border:1px solid var(--border);background:var(--surface);color:var(--text2);}
+.tb-btn:hover{color:var(--text);border-color:var(--green);}
+.tb-btn.danger{border-color:var(--red-dark);color:var(--red);}
+
+/* Metric cards */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 28px;}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.metric-card .m-label{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;margin-bottom:8px;}
+.metric-card .m-value{font-family:var(--display);font-size:32px;font-weight:800;}
+.metric-card .m-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+.metric-card.green .m-value{color:var(--green);}
+.metric-card.yellow .m-value{color:var(--yellow);}
+.metric-card.red .m-value{color:var(--red);}
+
+/* Bin list table */
+.section-wrap{padding:0 28px 28px;}
+.section-title{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:16px;}
+.bin-table{width:100%;border-collapse:collapse;font-size:14px;}
+.bin-table th{padding:10px 14px;text-align:left;font-size:11px;color:var(--text3);font-family:var(--mono);border-bottom:1px solid var(--border);font-weight:400;letter-spacing:.5px;}
+.bin-table td{padding:12px 14px;border-bottom:1px solid rgba(45,61,45,.5);}
+.bin-table tr:hover td{background:var(--surface);}
+.fill-bar{width:120px;background:var(--surface);border-radius:100px;height:6px;overflow:hidden;}
+.fill-inner{height:100%;border-radius:100px;transition:width .5s,background .5s;}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-family:var(--mono);}
+.status-badge.ok{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2);}
+.status-badge.warn{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);}
+.status-badge.full{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);}
+.status-badge.collecting{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
+.action-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--sans);transition:all .2s;}
+.action-btn:hover{border-color:var(--green);color:var(--green);}
+
+/* Map mock */
+.map-wrap{margin:0 28px 28px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg2);}
+.map-inner{position:relative;height:380px;background:#111e11;overflow:hidden;}
+.map-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(74,222,128,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(74,222,128,.05) 1px,transparent 1px);background-size:32px 32px;}
+.map-road-h{position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.06);}
+.map-road-v{position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,.06);}
+.map-bin-marker{position:absolute;cursor:pointer;transform:translate(-50%,-50%);transition:transform .2s;}
+.map-bin-marker:hover{transform:translate(-50%,-50%) scale(1.2);}
+.map-bin-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,0,0,.5);position:relative;}
+.map-bin-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;animation:ripple 2s infinite;}
+@keyframes ripple{0%{box-shadow:0 0 0 0 currentColor;opacity:.6;}100%{box-shadow:0 0 0 10px transparent;opacity:0;}}
+.map-bin-dot.green-dot{background:var(--green);color:var(--green);}
+.map-bin-dot.yellow-dot{background:var(--yellow);color:var(--yellow);}
+.map-bin-dot.red-dot{background:var(--red);color:var(--red);}
+.map-bin-dot.blue-dot{background:var(--blue);color:var(--blue);}
+.map-tooltip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;white-space:nowrap;z-index:10;display:none;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);}
+.map-bin-marker:hover .map-tooltip{display:block;}
+.map-legend{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:20px;font-size:12px;color:var(--text2);}
+.map-legend-item{display:flex;align-items:center;gap:6px;}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* Alerts */
+.alerts-list{display:flex;flex-direction:column;gap:12px;}
+.alert-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s;}
+.alert-item.unread{border-left:3px solid var(--red);}
+.alert-item.resolved{opacity:.6;}
+.alert-icon{font-size:22px;flex-shrink:0;}
+.alert-info{flex:1;}
+.alert-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.alert-meta{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.resolve-btn{padding:6px 14px;border-radius:8px;font-size:12px;background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.resolve-btn:hover{border-color:var(--green);color:var(--green);}
+
+/* Analytics */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
+.chart-card h4{font-size:14px;font-weight:600;margin-bottom:20px;color:var(--text);}
+/* Horizontal bar chart */
+.hbar-chart{display:flex;flex-direction:column;gap:12px;}
+.hbar-row{display:flex;align-items:center;gap:10px;}
+.hbar-label{width:90px;font-size:12px;color:var(--text2);text-align:right;flex-shrink:0;}
+.hbar-track{flex:1;background:var(--surface);border-radius:4px;height:22px;overflow:hidden;position:relative;}
+.hbar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.hbar-fill span{font-size:11px;font-family:var(--mono);font-weight:700;color:#000;}
+.hbar-val{width:38px;font-size:12px;font-family:var(--mono);color:var(--text2);text-align:right;flex-shrink:0;}
+/* Vertical bar chart for hourly */
+.vbar-chart{display:flex;align-items:flex-end;gap:6px;height:160px;padding-bottom:24px;position:relative;}
+.vbar-chart::after{content:'';position:absolute;bottom:24px;left:0;right:0;height:1px;background:var(--border);}
+.vbar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;position:relative;}
+.vbar-val{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:4px;min-height:14px;}
+.vbar-body{width:100%;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1);min-height:2px;}
+.vbar-label{position:absolute;bottom:-20px;font-size:10px;color:var(--text3);white-space:nowrap;}
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:10px;}
+.donut-item{display:flex;align-items:center;gap:8px;font-size:12px;}
+.donut-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
+/* Settings */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.setting-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.setting-card h4{font-size:14px;font-weight:600;margin-bottom:16px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(45,61,45,.5);font-size:14px;}
+.setting-row:last-child{border-bottom:none;}
+.setting-row label{color:var(--text2);font-size:13px;}
+.toggle{width:36px;height:20px;border-radius:100px;background:var(--surface);cursor:pointer;position:relative;transition:background .2s;border:none;outline:none;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;}
+.toggle.on::after{transform:translateX(16px);}
+.setting-input{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;color:var(--text);font-family:var(--mono);width:80px;outline:none;}
+.setting-input:focus{border-color:var(--green);}
+
+/* ==================== COLLECTOR ==================== */
+#panel-collector{padding:28px;max-width:900px;margin:0 auto;}
+.collector-header{margin-bottom:28px;}
+.collector-header h2{font-family:var(--display);font-size:28px;font-weight:800;margin-bottom:4px;}
+.collector-header p{color:var(--text2);font-size:15px;}
+.collector-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.route-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;}
+.route-card h3{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:16px;}
+.route-stop{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(45,61,45,.5);}
+.route-stop:last-child{border-bottom:none;}
+.stop-num{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--mono);flex-shrink:0;margin-top:2px;}
+.stop-num.priority{background:rgba(248,113,113,.15);border-color:var(--red-dark);color:var(--red);}
+.stop-info{flex:1;}
+.stop-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.stop-detail{font-size:12px;color:var(--text2);}
+.stop-actions{display:flex;gap:6px;align-items:center;}
+.empty-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;background:var(--green);color:#000;border:none;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.empty-btn:hover{background:#6ee7a0;}
+.empty-btn:disabled{background:var(--surface);color:var(--text3);cursor:not-allowed;}
+.empty-btn.done{background:var(--surface2);color:var(--green);border:1px solid var(--border);}
+.collector-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.coll-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;}
+.coll-stat-val{font-family:var(--display);font-size:28px;font-weight:800;color:var(--green);}
+.coll-stat-label{font-size:12px;color:var(--text2);margin-top:4px;}
+.progress-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;}
+.progress-card h3{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:16px;}
+.prog-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:14px;}
+.prog-label{width:120px;color:var(--text2);}
+.prog-bar-wrap{flex:1;background:var(--surface);border-radius:100px;height:8px;overflow:hidden;}
+.prog-bar-inner{height:100%;border-radius:100px;}
+.prog-val{width:40px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--text2);}
+
+/* Utilities */
+.divider{height:1px;background:var(--border);margin:8px 0;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:var(--mono);}
+.tag.dry{background:rgba(251,191,36,.1);color:var(--yellow);}
+.tag.wet{background:rgba(74,222,128,.1);color:var(--green);}
+.tag.med{background:rgba(248,113,113,.1);color:var(--red);}
+.tag.ewaste{background:rgba(96,165,250,.1);color:var(--blue);}
+.empty-state{text-align:center;padding:48px;color:var(--text3);}
+.empty-state .e-icon{font-size:48px;margin-bottom:16px;}
+/* PIN MODAL */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);animation:fadeIn .2s ease;}
+.pin-overlay.hidden{display:none;}
+.pin-modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 40px;width:340px;text-align:center;position:relative;}
+.pin-modal-icon{font-size:40px;margin-bottom:12px;}
+.pin-modal h3{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px;}
+.pin-modal p{font-size:13px;color:var(--text2);margin-bottom:28px;line-height:1.5;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:24px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);background:transparent;transition:all .15s;}
+.pin-dot.filled{background:var(--green);border-color:var(--green);}
+.pin-dot.error{background:var(--red);border-color:var(--red);}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.pin-key{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:18px;font-family:var(--mono);font-weight:700;cursor:pointer;color:var(--text);transition:all .15s;}
+.pin-key:hover{background:var(--surface2);border-color:var(--green);color:var(--green);}
+.pin-key:active{transform:scale(.95);}
+.pin-key.del{font-size:14px;color:var(--text2);}
+.pin-key.zero{grid-column:2;}
+.pin-error-msg{font-size:13px;color:var(--red);min-height:20px;margin-bottom:8px;}
+.pin-cancel{background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;font-family:var(--sans);padding:8px;}
+.pin-cancel:hover{color:var(--text2);}
+.pin-hint{font-size:11px;color:var(--text3);margin-top:12px;font-family:var(--mono);}
+.nav-tab-lock::after{content:'🔒';font-size:10px;margin-left:4px;vertical-align:middle;}
+
+.map-bin-marker.selected .map-bin-dot{box-shadow:0 0 0 4px rgba(96,165,250,.6);transform:scale(1.3);}
+.map-bin-marker.selected{z-index:5;}
+/* Kiosk two-column layout */
+.kiosk-outer{display:grid;grid-template-columns:1fr 340px;gap:24px;padding:24px 32px 32px;max-width:1100px;margin:0 auto;align-items:start;}
+.kiosk-sidebar{display:flex;flex-direction:column;gap:16px;}
+.kiosk-info-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.kiosk-info-card h4{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:14px;color:var(--green);}
+.nearby-bin-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(45,61,45,.5);font-size:13px;}
+.nearby-bin-item:last-child{border-bottom:none;}
+.nearby-bin-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.nearby-bin-info{flex:1;}
+.nearby-bin-dist{font-family:var(--mono);font-size:11px;color:var(--text3);}
+/* GPS area selector */
+.area-selector{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:0;}
+.area-selector h4{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--green);}
+.area-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.area-chip{padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:12px;cursor:pointer;transition:all .2s;color:var(--text2);}
+.area-chip.selected{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.08);}
+.gps-btn{width:100%;margin-top:12px;padding:10px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:10px;color:var(--green);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.gps-btn:hover{background:rgba(74,222,128,.2);}
+/* User panel nearest bin banner */
+.nearest-bin-banner{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);border-radius:var(--radius);padding:12px 16px;font-size:13px;margin-bottom:16px;display:none;}
+.nearest-bin-banner strong{color:var(--blue);}
+
+.notification-toast.show{display:block;}
+.notification-toast.alert-toast{border-left:3px solid var(--red);}
+.notification-toast.success-toast{border-left:3px solid var(--green);}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>🗑️</span> BinGuard</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPanel('home')">Home</button>
+    <button class="nav-tab" onclick="switchPanel('kiosk')">Bin Kiosk</button>
+    <button class="nav-tab" onclick="switchPanel('admin')" id="tab-admin">Admin Panel 🔒</button>
+    <button class="nav-tab" onclick="switchPanel('collector')" id="tab-collector">Collector 🔒</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);">
+    <div class="status-dot"></div> Live
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="notification-toast" id="toast"></div>
+
+<!-- PIN MODAL -->
+<div class="pin-overlay hidden" id="pin-overlay">
+  <div class="pin-modal">
+    <div class="pin-modal-icon" id="pin-icon">🔐</div>
+    <h3 id="pin-title">Admin Access</h3>
+    <p id="pin-desc">Enter your 4-digit PIN to access the Admin Panel.</p>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key del" onclick="pinBackspace()">⌫ Del</button>
+      <button class="pin-key zero" onclick="pinPress('0')">0</button>
+    </div>
+    <button class="pin-cancel" onclick="closePinModal()">Cancel</button>
+    <div class="pin-hint" id="pin-hint"></div>
+  </div>
+</div>
+
+<!-- ==================== HOME ==================== -->
+<div id="panel-home" class="panel active">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-badge"><div class="status-dot"></div> Smart City IoT Platform</div>
+    <h1>Waste Management<span class="accent">Reinvented.</span></h1>
+    <p>BinGuard connects every bin in your city to a real-time intelligence network — zero overflow, instant alerts, AI-powered sorting.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="switchPanel('kiosk')">Try Bin Kiosk →</button>
+      <button class="btn-secondary" onclick="switchPanel('admin')">Admin Dashboard 🔒</button>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num" id="stat-bins">24</div><div class="stat-label">Active Bins</div></div>
+    <div class="stat-item"><div class="stat-num" id="stat-alerts">3</div><div class="stat-label">Active Alerts</div></div>
+    <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Uptime</div></div>
+    <div class="stat-item"><div class="stat-num">2.4T</div><div class="stat-label">Waste Processed</div></div>
+  </div>
+  <div class="features">
+    <div class="features-title">Everything your city needs.</div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">🧠</div><h3>AI Item Classifier</h3><p>Citizens type any item — our AI instantly identifies the correct waste category and guides them to the right bin.</p></div>
+      <div class="feature-card"><div class="feature-icon">📡</div><h3>Real-time IoT Sensors</h3><p>Every bin reports its fill level continuously. Alerts trigger automatically at 90% capacity — before overflow happens.</p></div>
+      <div class="feature-card"><div class="feature-icon">🗺️</div><h3>Live City Map</h3><p>Color-coded map showing every bin's status at a glance. Green, yellow, red — know exactly where to send crews.</p></div>
+      <div class="feature-card"><div class="feature-icon">🚛</div><h3>Collector Routing</h3><p>Optimized collection routes for ground crews based on real-time priority. Full bins always get attended to first.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔔</div><h3>Instant Alerts</h3><p>Municipal officers receive immediate notifications when bins reach capacity — with location, type, and time.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Analytics Dashboard</h3><p>Understand waste patterns by area, time of day, and category. Make data-driven decisions for bin placement.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== KIOSK ==================== -->
+<div id="panel-kiosk" class="panel">
+  <div style="padding:24px 32px 0;">
+    <h2 style="font-family:var(--display);font-size:24px;font-weight:800;margin-bottom:4px;">Bin Kiosk Simulator</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:0;">Simulates the screen on each physical bin. Select your area to see the nearest bin.</p>
+  </div>
+  <div class="kiosk-outer">
+    <!-- Main kiosk screen -->
+    <div>
+      <!-- Area / GPS selector -->
+      <div class="area-selector" style="margin-bottom:20px;">
+        <h4>📍 Your Location</h4>
+        <div id="nearest-bin-banner" class="nearest-bin-banner"></div>
+        <div class="area-chips" id="area-chips">
+          <div class="area-chip" onclick="selectArea(this,'Anna Nagar')">Anna Nagar</div>
+          <div class="area-chip" onclick="selectArea(this,'T. Nagar')">T. Nagar</div>
+          <div class="area-chip" onclick="selectArea(this,'Adyar')">Adyar</div>
+          <div class="area-chip" onclick="selectArea(this,'Tambaram')">Tambaram</div>
+          <div class="area-chip" onclick="selectArea(this,'Velachery')">Velachery</div>
+          <div class="area-chip" onclick="selectArea(this,'Chromepet')">Chromepet</div>
+          <div class="area-chip" onclick="selectArea(this,'Guindy')">Guindy</div>
+          <div class="area-chip" onclick="selectArea(this,'Mylapore')">Mylapore</div>
+          <div class="area-chip" onclick="selectArea(this,'Nungambakkam')">Nungambakkam</div>
+        </div>
+        <button class="gps-btn" onclick="detectGPS()">📡 Use GPS to Auto-Detect My Area</button>
+      </div>
+
+      <div class="kiosk-screen" id="kiosk-screen-wrap">
+        <div class="kiosk-header">
+          <div>
+            <h2>BinGuard Kiosk</h2>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="kiosk-bin-location-label">Select your area above</div>
+          </div>
+          <div class="kiosk-time" id="kiosk-clock"></div>
+        </div>
+        <div class="kiosk-body">
+
+          <!-- Step indicator -->
+          <div class="steps" id="step-indicator">
+            <div class="step active" id="step-ind-0"><div class="step-num">1</div><div class="step-label">Capacity</div></div>
+            <div class="step-line"></div>
+            <div class="step" id="step-ind-1"><div class="step-num">2</div><div class="step-label">Category</div></div>
+            <div class="step-line"></div>
+            <div class="step" id="step-ind-2"><div class="step-num">3</div><div class="step-label">Search Item</div></div>
+            <div class="step-line"></div>
+            <div class="step" id="step-ind-3"><div class="step-num">4</div><div class="step-label">Dispose</div></div>
+          </div>
+
+          <!-- STEP 0: Capacity Check -->
+          <div class="kiosk-step active" id="kstep-0">
+            <div id="no-area-msg" style="text-align:center;padding:32px 0;color:var(--text2);">
+              <div style="font-size:48px;margin-bottom:12px;">📍</div>
+              <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Select Your Area First</div>
+              <div style="font-size:13px;">Choose your location above to see the nearest bin and its status.</div>
+            </div>
+            <div id="kiosk-bin-content" style="display:none;">
+              <div style="margin-bottom:14px;font-size:13px;color:var(--text2);">Your assigned bin:</div>
+              <div class="bin-select-row" id="kiosk-bin-chips"></div>
+              <div class="capacity-display">
+                <div id="k-cap-icon" class="big-icon">🗑️</div>
+                <div class="capacity-pct" id="k-cap-pct" style="color:var(--green)">22%</div>
+                <div class="capacity-bar-wrap">
+                  <div class="capacity-bar" id="k-cap-bar" style="width:22%;background:var(--green)"></div>
+                </div>
+                <div class="capacity-msg" id="k-cap-msg">Space available. You can dispose your waste.</div>
+              </div>
+              <div id="k-full-alert" class="full-alert" style="display:none;">
+                <h3>🚫 Bin is Full!</h3>
+                <p>Alert sent to Municipal Corporation. Nearest available bin shown on the right →</p>
+              </div>
+            </div>
+            <div class="kiosk-nav">
+              <button class="k-btn k-btn-next" id="k-next-0" onclick="kioskNext(1)" disabled>Check Capacity →</button>
+            </div>
+          </div>
+
+          <!-- STEP 1: Category -->
+          <div class="kiosk-step" id="kstep-1">
+            <div style="margin-bottom:16px;font-size:15px;font-weight:600;">Select waste category:</div>
+            <div class="cat-grid">
+              <div class="cat-card" onclick="selectCategory(this,'Dry Waste','♻️')">
+                <div class="cat-icon">♻️</div><div class="cat-name">Dry Waste</div><div class="cat-desc">Paper, plastic, glass, metal</div>
+              </div>
+              <div class="cat-card" onclick="selectCategory(this,'Wet Waste','🍃')">
+                <div class="cat-icon">🍃</div><div class="cat-name">Wet Waste</div><div class="cat-desc">Food scraps, garden waste</div>
+              </div>
+              <div class="cat-card" onclick="selectCategory(this,'Medical Waste','🏥')">
+                <div class="cat-icon">🏥</div><div class="cat-name">Medical Waste</div><div class="cat-desc">Syringes, medicine, bandages</div>
+              </div>
+              <div class="cat-card" onclick="selectCategory(this,'E-Waste','💻')">
+                <div class="cat-icon">💻</div><div class="cat-name">E-Waste</div><div class="cat-desc">Electronics, batteries, cables</div>
+              </div>
+            </div>
+            <div class="kiosk-nav">
+              <button class="k-btn k-btn-back" onclick="kioskBack(0)">← Back</button>
+              <button class="k-btn k-btn-next" id="k-next-1" onclick="kioskNext(2)" disabled>Next →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Search Item -->
+          <div class="kiosk-step" id="kstep-2">
+            <div style="margin-bottom:6px;font-size:15px;font-weight:600;">What are you disposing?</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Type your item — AI will confirm it belongs here.</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+              <div style="font-size:13px;color:var(--text2);">Category:</div>
+              <span id="selected-cat-tag" class="tag dry">Dry Waste</span>
+            </div>
+            <div class="search-box">
+              <input class="search-input" id="item-search" type="text" placeholder="e.g. plastic bottle, banana peel…" onkeydown="if(event.key==='Enter')classifyItem()"/>
+              <button class="search-btn" onclick="classifyItem()">Ask AI</button>
+            </div>
+            <div id="ai-result-wrap" style="display:none;">
+              <div class="ai-result">
+                <div class="ai-label">✦ AI CLASSIFICATION</div>
+                <div class="ai-item-name" id="ai-item-name"></div>
+                <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span id="ai-cat-tag" class="ai-cat-tag"></span>
+                  <span id="ai-match-badge" style="font-size:12px;"></span>
+                </div>
+                <div id="ai-explanation" style="font-size:13px;color:var(--text2);margin-top:10px;line-height:1.5;"></div>
+              </div>
+            </div>
+            <div id="ai-loading" style="display:none;padding:16px 0;text-align:center;color:var(--text2);font-size:14px;">
+              Classifying item <div class="loading-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="kiosk-nav">
+              <button class="k-btn k-btn-back" onclick="kioskBack(1)">← Back</button>
+              <button class="k-btn k-btn-next" id="k-next-2" onclick="kioskNext(3)" disabled>Dispose →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Done -->
+          <div class="kiosk-step" id="kstep-3">
+            <div class="dispose-success">
+              <div class="success-circle">✓</div>
+              <h3 style="font-family:var(--display);font-size:24px;font-weight:800;margin-bottom:8px;color:var(--green);">Disposal Complete!</h3>
+              <p style="color:var(--text2);font-size:15px;margin-bottom:24px;">Thank you for disposing responsibly.<br/>Bin capacity updated.</p>
+              <div id="dispose-summary" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:left;margin-bottom:24px;font-size:14px;"></div>
+              <button class="k-btn k-btn-next" onclick="kioskReset()" style="width:100%;">Dispose Another →</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- KIOSK SIDEBAR -->
+    <div class="kiosk-sidebar">
+      <!-- Nearby bins -->
+      <div class="kiosk-info-card">
+        <h4>🗺️ Nearby Bins</h4>
+        <div id="kiosk-nearby-bins"><div style="color:var(--text3);font-size:13px;">Select your area to see nearby bins.</div></div>
+      </div>
+      <!-- Waste tips -->
+      <div class="kiosk-info-card">
+        <h4>♻️ Waste Sorting Tips</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text2);">
+          <div style="display:flex;gap:8px;align-items:flex-start;"><span>♻️</span><span><strong style="color:var(--text);">Dry Waste</strong> — Paper, plastic bottles, glass jars, metals, cardboard</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;"><span>🍃</span><span><strong style="color:var(--text);">Wet Waste</strong> — Food leftovers, peels, leaves, garden trimmings</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;"><span>🏥</span><span><strong style="color:var(--text);">Medical</strong> — Syringes, medicine strips, bandages, gloves</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;"><span>💻</span><span><strong style="color:var(--text);">E-Waste</strong> — Old phones, cables, batteries, circuit boards</span></div>
+        </div>
+      </div>
+      <!-- Today's stats -->
+      <div class="kiosk-info-card">
+        <h4>📊 Today's City Stats</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Disposals today</span><span style="font-family:var(--mono);color:var(--green);" id="kiosk-stat-disposals">0</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Bins available</span><span style="font-family:var(--mono);color:var(--green);" id="kiosk-stat-available">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Bins full / alert</span><span style="font-family:var(--mono);color:var(--red);" id="kiosk-stat-full">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Collectors active</span><span style="font-family:var(--mono);color:var(--blue);">2</span></div>
+        </div>
+      </div>
+      <!-- Emergency contacts -->
+      <div class="kiosk-info-card">
+        <h4>📞 Quick Contacts</h4>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">Municipal Helpline</span><span style="font-family:var(--mono);color:var(--green);">1913</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">Waste Complaints</span><span style="font-family:var(--mono);color:var(--green);">044-2538</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">Emergency</span><span style="font-family:var(--mono);color:var(--red);">112</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN ==================== -->
+<div id="panel-admin" class="panel">
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+      <div style="padding:0 20px 16px;border-bottom:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:600;">Municipal Admin</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">Chennai Corporation</div>
+      </div>
+      <div class="sidebar-section">OVERVIEW</div>
+      <div class="sidebar-item active" onclick="adminNav('dashboard',this)"><span class="s-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item" onclick="adminNav('map',this)"><span class="s-icon">🗺️</span> Bin Map</div>
+      <div class="sidebar-section">MANAGEMENT</div>
+      <div class="sidebar-item" onclick="adminNav('bins',this)"><span class="s-icon">🗑️</span> All Bins</div>
+      <div class="sidebar-item" onclick="adminNav('alerts',this)"><span class="s-icon">🔔</span> Alerts <span class="badge-count" id="alert-badge">3</span></div>
+      <div class="sidebar-section">INSIGHTS</div>
+      <div class="sidebar-item" onclick="adminNav('analytics',this)"><span class="s-icon">📈</span> Analytics</div>
+      <div class="sidebar-item" onclick="adminNav('settings',this)"><span class="s-icon">⚙️</span> Settings</div>
+    </div>
+
+    <!-- Main -->
+    <div class="admin-main">
+
+      <!-- DASHBOARD -->
+      <div class="admin-sub active" id="admin-dashboard">
+        <div class="admin-topbar">
+          <h2>Dashboard</h2>
+          <div class="topbar-actions">
+            <button class="tb-btn" onclick="simulateFill()">Simulate Fill ↑</button>
+            <button class="tb-btn danger" onclick="triggerAlert()">Trigger Alert</button>
+          </div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card green"><div class="m-label">TOTAL BINS</div><div class="m-value" id="m-total">24</div><div class="m-sub">Across 8 zones</div></div>
+          <div class="metric-card green"><div class="m-label">BINS OK</div><div class="m-value" id="m-ok">18</div><div class="m-sub">Below 70% fill</div></div>
+          <div class="metric-card yellow"><div class="m-label">BINS WARNING</div><div class="m-value" id="m-warn">3</div><div class="m-sub">70–90% fill</div></div>
+          <div class="metric-card red"><div class="m-label">BINS FULL</div><div class="m-value" id="m-full">3</div><div class="m-sub">Alert sent</div></div>
+        </div>
+        <div class="section-wrap">
+          <div class="section-title">Recent Alerts</div>
+          <div id="dash-alerts"></div>
+        </div>
+        <div class="section-wrap">
+          <div class="section-title">Bin Status Overview</div>
+          <table class="bin-table">
+            <thead><tr><th>BIN ID</th><th>LOCATION</th><th>TYPE</th><th>FILL</th><th>STATUS</th><th>LAST UPDATED</th><th>ACTION</th></tr></thead>
+            <tbody id="dash-bin-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MAP -->
+      <div class="admin-sub" id="admin-map">
+        <div class="admin-topbar"><h2>Bin Map — Chennai</h2>
+          <div class="topbar-actions">
+            <button class="tb-btn" id="map-clear-btn" onclick="clearMapSelection()" style="display:none;">Clear Selection</button>
+            <span style="font-size:13px;color:var(--text2);" id="map-select-hint">Click bins to select a route path</span>
+          </div>
+        </div>
+        <div class="map-wrap">
+          <div class="map-inner" id="city-map" style="height:440px;">
+            <div class="map-grid-bg"></div>
+            <div class="map-road-h" style="top:30%;"></div>
+            <div class="map-road-h" style="top:55%;"></div>
+            <div class="map-road-h" style="top:78%;"></div>
+            <div class="map-road-v" style="left:25%;"></div>
+            <div class="map-road-v" style="left:55%;"></div>
+            <div class="map-road-v" style="left:80%;"></div>
+            <!-- SVG for paths/distances -->
+            <svg id="map-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;"></svg>
+            <div id="map-markers"></div>
+          </div>
+          <div style="padding:12px 20px;background:var(--surface);border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+            <div class="map-legend-item"><div class="leg-dot" style="background:var(--green)"></div> Available (&lt;70%)</div>
+            <div class="map-legend-item"><div class="leg-dot" style="background:var(--yellow)"></div> Warning (70–90%)</div>
+            <div class="map-legend-item"><div class="leg-dot" style="background:var(--red)"></div> Full (&gt;90%)</div>
+            <div class="map-legend-item"><div class="leg-dot" style="background:var(--blue)"></div> Being Collected</div>
+            <div id="map-route-info" style="margin-left:auto;font-size:13px;color:var(--text2);font-family:var(--mono);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL BINS -->
+      <div class="admin-sub" id="admin-bins">
+        <div class="admin-topbar">
+          <h2>All Bins</h2>
+          <div class="topbar-actions">
+            <button class="tb-btn" onclick="simulateFill()">Simulate Fill ↑</button>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:20px;">
+          <table class="bin-table">
+            <thead><tr><th>BIN ID</th><th>LOCATION</th><th>TYPE</th><th>FILL %</th><th>STATUS</th><th>LAST UPDATED</th><th>ACTION</th></tr></thead>
+            <tbody id="all-bin-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="admin-sub" id="admin-alerts">
+        <div class="admin-topbar">
+          <h2>Alerts</h2>
+          <div class="topbar-actions">
+            <button class="tb-btn" onclick="resolveAll()">Resolve All</button>
+            <button class="tb-btn danger" onclick="triggerAlert()">+ Simulate Alert</button>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:20px;">
+          <div class="alerts-list" id="alerts-list"></div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="admin-sub" id="admin-analytics">
+        <div class="admin-topbar"><h2>Analytics</h2></div>
+        <div class="section-wrap" style="padding-top:20px;">
+          <div class="analytics-grid">
+            <div class="chart-card" style="grid-column:1/-1;">
+              <h4>📍 Garbage Bin Fill Level by Area</h4>
+              <div class="hbar-chart" id="bar-chart-zone"></div>
+            </div>
+            <div class="chart-card">
+              <h4>📦 Waste Category Split</h4>
+              <div class="donut-wrap">
+                <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#1e271e" stroke-width="20"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#4ade80" stroke-width="20" stroke-dasharray="110 166" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#fbbf24" stroke-width="20" stroke-dasharray="55 221" stroke-dashoffset="-110" transform="rotate(-90 60 60)"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#f87171" stroke-width="20" stroke-dasharray="33 243" stroke-dashoffset="-165" transform="rotate(-90 60 60)"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#60a5fa" stroke-width="20" stroke-dasharray="28 248" stroke-dashoffset="-198" transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="donut-legend">
+                  <div class="donut-item"><div class="donut-swatch" style="background:var(--green)"></div> Dry Waste — 40%</div>
+                  <div class="donut-item"><div class="donut-swatch" style="background:var(--yellow)"></div> Wet Waste — 20%</div>
+                  <div class="donut-item"><div class="donut-swatch" style="background:var(--red)"></div> Medical — 12%</div>
+                  <div class="donut-item"><div class="donut-swatch" style="background:var(--blue)"></div> E-Waste — 10%</div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <h4>⏰ Hourly Alert Frequency (Today)</h4>
+              <div class="vbar-chart" id="bar-chart-hourly"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="admin-sub" id="admin-settings">
+        <div class="admin-topbar"><h2>Settings</h2></div>
+        <div class="section-wrap" style="padding-top:20px;">
+          <div class="settings-grid">
+            <div class="setting-card">
+              <h4>Alert Thresholds</h4>
+              <div class="setting-row"><span>Full Alert Trigger</span><label><input class="setting-input" value="90" id="set-full-threshold"/>%</label></div>
+              <div class="setting-row"><span>Warning Trigger</span><label><input class="setting-input" value="70"/>%</label></div>
+              <div class="setting-row"><span>Auto-assign Collector</span><button class="toggle on" id="tog-collector" onclick="toggleSetting(this)"></button></div>
+            </div>
+            <div class="setting-card">
+              <h4>Notifications</h4>
+              <div class="setting-row"><label>Browser Notifications</label><button class="toggle on" onclick="toggleSetting(this)"></button></div>
+              <div class="setting-row"><label>SMS Alerts (Simulated)</label><button class="toggle on" onclick="toggleSetting(this)"></button></div>
+              <div class="setting-row"><label>Email Digest</label><button class="toggle" onclick="toggleSetting(this)"></button></div>
+            </div>
+            <div class="setting-card">
+              <h4>System</h4>
+              <div class="setting-row"><label>Auto-refresh interval</label><input class="setting-input" value="30" style="width:60px;"/>s</div>
+              <div class="setting-row"><label>Sensor polling rate</label><input class="setting-input" value="5" style="width:60px;"/>s</div>
+              <div class="setting-row"><label>Offline mode</label><button class="toggle" onclick="toggleSetting(this)"></button></div>
+            </div>
+            <div class="setting-card">
+              <h4>🔐 PIN Management</h4>
+              <div class="setting-row">
+                <label>Admin PIN</label>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <input class="setting-input" id="new-admin-pin" type="password" maxlength="4" placeholder="••••" style="width:70px;letter-spacing:4px;"/>
+                  <button class="action-btn" onclick="changePin('admin')">Save</button>
+                </div>
+              </div>
+              <div class="setting-row">
+                <label>Collector PIN</label>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <input class="setting-input" id="new-collector-pin" type="password" maxlength="4" placeholder="••••" style="width:70px;letter-spacing:4px;"/>
+                  <button class="action-btn" onclick="changePin('collector')">Save</button>
+                </div>
+              </div>
+              <div class="setting-row">
+                <label>Lock Admin Session</label>
+                <button class="action-btn" onclick="lockSession('admin')" style="border-color:var(--red-dark);color:var(--red);">Lock 🔒</button>
+              </div>
+              <div class="setting-row">
+                <label>Lock Collector Session</label>
+                <button class="action-btn" onclick="lockSession('collector')" style="border-color:var(--red-dark);color:var(--red);">Lock 🔒</button>
+              </div>
+              <div class="setting-row">
+                <label>Reset All Data</label>
+                <button class="action-btn" onclick="resetAllData()" style="border-color:var(--red-dark);color:var(--red);">Reset 🗑️</button>
+              </div>
+            </div>
+              <div class="setting-row"><label>Claude AI</label><button class="toggle on" onclick="toggleSetting(this)"></button></div>
+              <div class="setting-row"><label>Confidence threshold</label><input class="setting-input" value="75"/>%</div>
+              <div class="setting-row"><label>Multi-language support</label><button class="toggle on" onclick="toggleSetting(this)"></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== COLLECTOR ==================== -->
+<div id="panel-collector" class="panel">
+  <div class="collector-header">
+    <h2>Collector Panel</h2>
+    <p>Your assigned route for today — <span id="coll-date"></span></p>
+  </div>
+  <div class="collector-stats">
+    <div class="coll-stat"><div class="coll-stat-val" id="coll-assigned">7</div><div class="coll-stat-label">Bins Assigned</div></div>
+    <div class="coll-stat"><div class="coll-stat-val" id="coll-done" style="color:var(--text2)">0</div><div class="coll-stat-label">Emptied Today</div></div>
+    <div class="coll-stat"><div class="coll-stat-val">4.2 km</div><div class="coll-stat-label">Route Distance</div></div>
+  </div>
+  <div class="collector-grid">
+    <div class="route-card" style="grid-column:1/-1;">
+      <h3>🚛 Today's Route — Priority Order</h3>
+      <div id="collector-route"></div>
+    </div>
+  </div>
+  <div class="progress-card">
+    <h3>Zone Progress</h3>
+    <div class="prog-row"><div class="prog-label">Anna Nagar</div><div class="prog-bar-wrap"><div class="prog-bar-inner" style="width:80%;background:var(--red)"></div></div><div class="prog-val" style="color:var(--red)">80%</div></div>
+    <div class="prog-row"><div class="prog-label">T. Nagar</div><div class="prog-bar-wrap"><div class="prog-bar-inner" style="width:65%;background:var(--yellow)"></div></div><div class="prog-val" style="color:var(--yellow)">65%</div></div>
+    <div class="prog-row"><div class="prog-label">Adyar</div><div class="prog-bar-wrap"><div class="prog-bar-inner" style="width:40%;background:var(--green)"></div></div><div class="prog-val" style="color:var(--green)">40%</div></div>
+    <div class="prog-row"><div class="prog-label">Tambaram</div><div class="prog-bar-wrap"><div class="prog-bar-inner" style="width:90%;background:var(--red)"></div></div><div class="prog-val" style="color:var(--red)">90%</div></div>
+    <div class="prog-row"><div class="prog-label">Velachery</div><div class="prog-bar-wrap"><div class="prog-bar-inner" style="width:30%;background:var(--green)"></div></div><div class="prog-val" style="color:var(--green)">30%</div></div>
+  </div>
+</div>
+
+<script>
+// ==================== PERSISTENCE ====================
+const DEFAULT_BINS = [
+  {id:'BG-01',location:'Anna Nagar, Main Rd',type:'Dry Waste',fill:22,status:'ok',updated:'2 min ago',x:20,y:25},
+  {id:'BG-02',location:'T. Nagar, Pondy Bazaar',type:'Wet Waste',fill:67,status:'ok',updated:'1 min ago',x:50,y:20},
+  {id:'BG-03',location:'Adyar, LB Rd',type:'Dry Waste',fill:94,status:'full',updated:'just now',x:80,y:35},
+  {id:'BG-04',location:'Tambaram, GST Rd',type:'Medical',fill:100,status:'full',updated:'just now',x:30,y:55},
+  {id:'BG-05',location:'Velachery, 100ft Rd',type:'E-Waste',fill:45,status:'ok',updated:'5 min ago',x:65,y:50},
+  {id:'BG-06',location:'Chromepet Market',type:'Wet Waste',fill:78,status:'warn',updated:'3 min ago',x:40,y:75},
+  {id:'BG-07',location:'Guindy, Industrial',type:'Dry Waste',fill:55,status:'ok',updated:'4 min ago',x:75,y:70},
+  {id:'BG-08',location:'Mylapore, Tank St',type:'Medical',fill:88,status:'warn',updated:'2 min ago',x:55,y:80},
+  {id:'BG-09',location:'Nungambakkam, HRC',type:'E-Waste',fill:12,status:'ok',updated:'8 min ago',x:25,y:40},
+  {id:'BG-10',location:'Kodambakkam, KH Rd',type:'Dry Waste',fill:34,status:'ok',updated:'6 min ago',x:45,y:35},
+  {id:'BG-11',location:'Perambur, BBR',type:'Wet Waste',fill:91,status:'full',updated:'just now',x:70,y:18},
+  {id:'BG-12',location:'Royapettah, TTK Rd',type:'Dry Waste',fill:60,status:'ok',updated:'3 min ago',x:60,y:62},
+];
+const DEFAULT_ALERTS = [
+  {id:1,bin:'BG-03',location:'Adyar, LB Rd',type:'Dry Waste',time:'10:42 AM',resolved:false,msg:'Bin reached 94% capacity'},
+  {id:2,bin:'BG-04',location:'Tambaram, GST Rd',type:'Medical',time:'10:38 AM',resolved:false,msg:'Bin is 100% full — overflow risk'},
+  {id:3,bin:'BG-11',location:'Perambur, BBR',type:'Wet Waste',time:'10:35 AM',resolved:false,msg:'Bin reached 91% capacity'},
+];
+
+function loadState(){
+  try{
+    const b=localStorage.getItem('bg_bins');
+    const a=localStorage.getItem('bg_alerts');
+    const c=localStorage.getItem('bg_alertCounter');
+    const e=localStorage.getItem('bg_emptied');
+    const p=localStorage.getItem('bg_pins');
+    const ct=localStorage.getItem('bg_collectorTasks');
+    return {
+      bins: b ? JSON.parse(b) : JSON.parse(JSON.stringify(DEFAULT_BINS)),
+      alerts: a ? JSON.parse(a) : JSON.parse(JSON.stringify(DEFAULT_ALERTS)),
+      alertIdCounter: c ? parseInt(c) : 4,
+      emptiedBins: new Set(e ? JSON.parse(e) : []),
+      pins: p ? JSON.parse(p) : {admin:'1234',collector:'5678'},
+      collectorTasks: ct ? JSON.parse(ct) : []
+    };
+  } catch(err){
+    return {
+      bins: JSON.parse(JSON.stringify(DEFAULT_BINS)),
+      alerts: JSON.parse(JSON.stringify(DEFAULT_ALERTS)),
+      alertIdCounter: 4,
+      emptiedBins: new Set(),
+      pins: {admin:'1234',collector:'5678'},
+      collectorTasks: []
+    };
+  }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem('bg_bins', JSON.stringify(bins));
+    localStorage.setItem('bg_alerts', JSON.stringify(alerts));
+    localStorage.setItem('bg_alertCounter', String(alertIdCounter));
+    localStorage.setItem('bg_emptied', JSON.stringify([...emptiedBins]));
+    localStorage.setItem('bg_pins', JSON.stringify(pins));
+    localStorage.setItem('bg_collectorTasks', JSON.stringify(collectorTasks));
+  } catch(err){ /* storage full or unavailable */ }
+}
+
+// ==================== DATA ====================
+const _state = loadState();
+const bins = _state.bins;
+let alerts = _state.alerts;
+let alertIdCounter = _state.alertIdCounter;
+let emptiedBins = _state.emptiedBins;
+let collectorTasks = _state.collectorTasks; // bins resolved by admin → pending collection
+
+const routeStops = [
+  {binId:'BG-04',location:'Tambaram, GST Rd',fill:100,type:'Medical',priority:true},
+  {binId:'BG-03',location:'Adyar, LB Rd',fill:94,type:'Dry Waste',priority:true},
+  {binId:'BG-11',location:'Perambur, BBR',fill:91,type:'Wet Waste',priority:true},
+  {binId:'BG-08',location:'Mylapore, Tank St',fill:88,type:'Medical',priority:false},
+  {binId:'BG-06',location:'Chromepet Market',fill:78,type:'Wet Waste',priority:false},
+  {binId:'BG-02',location:'T. Nagar, Pondy Bazaar',fill:67,type:'Wet Waste',priority:false},
+  {binId:'BG-12',location:'Royapettah, TTK Rd',fill:60,type:'Dry Waste',priority:false},
+];
+
+// ==================== HELPERS ====================
+function fillColor(pct){return pct>=90?'var(--red)':pct>=70?'var(--yellow)':'var(--green)';}
+function statusBadge(s){
+  if(s==='ok') return '<span class="status-badge ok">● Available</span>';
+  if(s==='warn') return '<span class="status-badge warn">▲ Warning</span>';
+  if(s==='full') return '<span class="status-badge full">✖ Full</span>';
+  if(s==='collecting') return '<span class="status-badge collecting">↻ Collecting</span>';
+}
+function typeTag(t){
+  const map={'Dry Waste':'dry','Wet Waste':'wet','Medical':'med','E-Waste':'ewaste'};
+  return `<span class="tag ${map[t]||'dry'}">${t}</span>`;
+}
+function showToast(msg,type='alert'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className=`notification-toast show ${type}-toast`;
+  setTimeout(()=>t.className='notification-toast',3500);
+}
+
+// ==================== PANEL SWITCHING ====================
+// ==================== PIN SYSTEM ====================
+let pins = _state.pins;
+let sessions = { admin: false, collector: false };
+let pinTarget = '';
+let pinEntry = '';
+
+function switchPanel(id){
+  // Protected panels always require PIN — sessions are single-use
+  if(id==='admin'){
+    openPinModal('admin'); return;
+  }
+  if(id==='collector'){
+    openPinModal('collector'); return;
+  }
+  activatePanel(id);
+}
+
+function activatePanel(id){
+  // Clear sessions when leaving protected panels so next visit always asks for PIN
+  if(id==='home'||id==='kiosk'){
+    sessions={admin:false,collector:false};
+  }
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const tabs=['home','kiosk','admin','collector'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(id)].classList.add('active');
+  if(id==='kiosk'){
+    const b=bins.find(x=>x.id===kioskBinId);
+    if(b) kioskBinFill=b.fill;
+    if(selectedArea) applyAreaToBin();
+    updateKioskStats();
+  }
+  updateNavLockIcons();
+}
+
+function checkPin(){
+  const correctAdmin = pinEntry===pins.admin;
+  const correctCollector = pinEntry===pins.collector;
+
+  if(pinTarget==='admin' && correctAdmin){
+    sessions.admin=true;
+    closePinModal();
+    activatePanel('admin');
+    showToast('✅ Admin access granted','success');
+  } else if(pinTarget==='collector' && (correctCollector||correctAdmin)){
+    sessions.collector=true;
+    closePinModal();
+    activatePanel('collector');
+    showToast('✅ Collector access granted','success');
+  } else {
+    // Wrong PIN — shake dots red
+    for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
+    document.getElementById('pin-error').textContent='Incorrect PIN. Please try again.';
+    setTimeout(()=>{pinEntry=''; updatePinDots();},600);
+  }
+}
+
+function updateNavLockIcons(){
+  const adminTab=document.getElementById('tab-admin');
+  const collTab=document.getElementById('tab-collector');
+  if(adminTab) adminTab.textContent = 'Admin Panel 🔒';
+  if(collTab) collTab.textContent = 'Collector 🔒';
+}
+
+function openPinModal(target){
+  pinTarget=target; pinEntry='';
+  document.getElementById('pin-overlay').classList.remove('hidden');
+  document.getElementById('pin-error').textContent='';
+  if(target==='admin'){
+    document.getElementById('pin-icon').textContent='🏛️';
+    document.getElementById('pin-title').textContent='Admin Access';
+    document.getElementById('pin-desc').textContent='Enter your 4-digit Admin PIN to access the Admin Panel.';
+    document.getElementById('pin-hint').textContent='';
+  } else {
+    document.getElementById('pin-icon').textContent='🚛';
+    document.getElementById('pin-title').textContent='Collector Access';
+    document.getElementById('pin-desc').textContent='Enter your Collector PIN or Admin PIN to continue.';
+    document.getElementById('pin-hint').textContent='';
+  }
+  updatePinDots();
+}
+
+function closePinModal(){
+  document.getElementById('pin-overlay').classList.add('hidden');
+  pinEntry=''; updatePinDots();
+  document.getElementById('pin-error').textContent='';
+}
+
+function pinPress(digit){
+  if(pinEntry.length>=4) return;
+  pinEntry+=digit;
+  updatePinDots();
+  if(pinEntry.length===4) setTimeout(checkPin, 120);
+}
+
+function pinBackspace(){
+  pinEntry=pinEntry.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent='';
+}
+
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pd'+i);
+    d.classList.remove('filled','error');
+    if(i<pinEntry.length) d.classList.add('filled');
+  }
+}
+
+
+
+// Keyboard support for PIN
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pin-overlay').classList.contains('hidden')) return;
+  if(e.key>='0'&&e.key<='9') pinPress(e.key);
+  if(e.key==='Backspace') pinBackspace();
+  if(e.key==='Escape') closePinModal();
+});
+
+// Logout — clear sessions when going back to home
+function goHome(){ sessions={admin:false,collector:false}; activatePanel('home'); updateNavLockIcons(); }
+
+
+
+// ==================== ADMIN NAV ====================
+function adminNav(sub,el){
+  document.querySelectorAll('.admin-sub').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('admin-'+sub).classList.add('active');
+  el.classList.add('active');
+}
+
+// ==================== RENDER FUNCTIONS ====================
+function renderBinTable(tbodyId, showAll=false){
+  const data = showAll ? bins : bins.slice(0,6);
+  const tbody = document.getElementById(tbodyId);
+  if(!tbody) return;
+  tbody.innerHTML = data.map(b=>`
+    <tr>
+      <td style="font-family:var(--mono);font-size:13px;">${b.id}</td>
+      <td style="font-size:13px;">${b.location}</td>
+      <td>${typeTag(b.type)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="fill-bar"><div class="fill-inner" style="width:${b.fill}%;background:${fillColor(b.fill)}"></div></div>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--text2)">${b.fill}%</span>
+        </div>
+      </td>
+      <td>${statusBadge(b.status)}</td>
+      <td style="font-size:12px;color:var(--text2);font-family:var(--mono);">${b.updated}</td>
+      <td><button class="action-btn" onclick="markCollecting('${b.id}')">Collect</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderAlerts(){
+  const list=document.getElementById('alerts-list');
+  if(!list) return;
+  const unresolved = alerts.filter(a=>!a.resolved);
+  const resolved = alerts.filter(a=>a.resolved);
+  const all = [...unresolved,...resolved];
+  if(all.length===0){list.innerHTML='<div class="empty-state"><div class="e-icon">✅</div><p>No active alerts. All bins are operational.</p></div>';return;}
+  list.innerHTML=all.map(a=>`
+    <div class="alert-item ${a.resolved?'resolved':'unread'}" id="alert-${a.id}">
+      <div class="alert-icon">${a.resolved?'✅':'🔴'}</div>
+      <div class="alert-info">
+        <div class="alert-title">${a.bin} — ${a.location} ${a.resolved?'<span style="color:var(--green);font-size:12px;">Resolved</span>':''}</div>
+        <div class="alert-meta">${a.msg} · ${a.time} · ${a.type}</div>
+      </div>
+      ${!a.resolved?`<button class="resolve-btn" onclick="resolveAlert(${a.id})">Resolve</button>`:''}
+    </div>
+  `).join('');
+  document.getElementById('alerts-list');
+  // dash alerts (top 3)
+  const dash=document.getElementById('dash-alerts');
+  if(dash) dash.innerHTML=`<div class="alerts-list">${alerts.slice(0,3).map(a=>`
+    <div class="alert-item ${a.resolved?'resolved':'unread'}">
+      <div class="alert-icon">${a.resolved?'✅':'🔴'}</div>
+      <div class="alert-info">
+        <div class="alert-title">${a.bin} — ${a.location}</div>
+        <div class="alert-meta">${a.msg} · ${a.time}</div>
+      </div>
+      ${!a.resolved?`<button class="resolve-btn" onclick="resolveAlert(${a.id});renderAlerts();">Resolve</button>`:''}
+    </div>
+  `).join('')}</div>`;
+}
+
+// ==================== MAP ====================
+let selectedMapBins=[];
+
+function renderMapMarkers(){
+  const wrap=document.getElementById('map-markers');
+  if(!wrap) return;
+  wrap.innerHTML=bins.map(b=>{
+    const color=b.fill>=90?'red-dot':b.fill>=70?'yellow-dot':'green-dot';
+    const st=b.status==='collecting'?'blue-dot':color;
+    const isSelected=selectedMapBins.includes(b.id);
+    return `<div class="map-bin-marker${isSelected?' selected':''}" style="left:${b.x}%;top:${b.y}%" onclick="toggleMapBin('${b.id}')">
+      <div class="map-bin-dot ${st}"></div>
+      <div class="map-tooltip"><b>${b.id}</b><br/>${b.location}<br/>Fill: ${b.fill}% · ${b.type}</div>
+    </div>`;
+  }).join('');
+  drawMapPaths();
+}
+
+function toggleMapBin(id){
+  const idx=selectedMapBins.indexOf(id);
+  if(idx===-1) selectedMapBins.push(id);
+  else selectedMapBins.splice(idx,1);
+  renderMapMarkers();
+  const clearBtn=document.getElementById('map-clear-btn');
+  const hint=document.getElementById('map-select-hint');
+  if(clearBtn) clearBtn.style.display=selectedMapBins.length?'block':'none';
+  if(hint) hint.textContent=selectedMapBins.length>0?`${selectedMapBins.length} bin(s) selected`:'Click bins to select a route path';
+}
+
+function clearMapSelection(){
+  selectedMapBins=[];
+  renderMapMarkers();
+  const clearBtn=document.getElementById('map-clear-btn');
+  const hint=document.getElementById('map-select-hint');
+  const info=document.getElementById('map-route-info');
+  if(clearBtn) clearBtn.style.display='none';
+  if(hint) hint.textContent='Click bins to select a route path';
+  if(info) info.textContent='';
+}
+
+function mapDistancePx(b1,b2,mapW,mapH){
+  // Euclidean pixel distance scaled to ~km (1% ≈ 0.15 km for Chennai city scale)
+  const dx=(b1.x-b2.x)*mapW/100;
+  const dy=(b1.y-b2.y)*mapH/100;
+  const px=Math.sqrt(dx*dx+dy*dy);
+  return {px, km:(px*(0.15/50)*mapW/100).toFixed(2)};
+}
+
+function drawMapPaths(){
+  const svg=document.getElementById('map-svg');
+  if(!svg) return;
+  svg.innerHTML='';
+  if(selectedMapBins.length<2) {
+    const info=document.getElementById('map-route-info');
+    if(info) info.textContent=selectedMapBins.length===1?'Select more bins to draw a path':'';
+    return;
+  }
+  const mapEl=document.getElementById('city-map');
+  const W=mapEl.offsetWidth||600;
+  const H=mapEl.offsetHeight||440;
+  let totalKm=0;
+
+  for(let i=0;i<selectedMapBins.length-1;i++){
+    const b1=bins.find(b=>b.id===selectedMapBins[i]);
+    const b2=bins.find(b=>b.id===selectedMapBins[i+1]);
+    if(!b1||!b2) continue;
+    const x1=b1.x*W/100; const y1=b1.y*H/100;
+    const x2=b2.x*W/100; const y2=b2.y*H/100;
+    const mx=(x1+x2)/2; const my=(y1+y2)/2;
+    const {px,km}=mapDistancePx(b1,b2,W,H);
+    totalKm+=parseFloat(km);
+
+    // Draw dashed line
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#60a5fa'); line.setAttribute('stroke-width','2');
+    line.setAttribute('stroke-dasharray','6 4'); line.setAttribute('opacity','0.8');
+    svg.appendChild(line);
+
+    // Arrow in middle direction
+    const angle=Math.atan2(y2-y1,x2-x1);
+    const arrowSize=8;
+    const ax=mx+arrowSize*Math.cos(angle); const ay=my+arrowSize*Math.sin(angle);
+    const arr=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const pts=`${ax},${ay} ${ax-arrowSize*Math.cos(angle-0.4)},${ay-arrowSize*Math.sin(angle-0.4)} ${ax-arrowSize*Math.cos(angle+0.4)},${ay-arrowSize*Math.sin(angle+0.4)}`;
+    arr.setAttribute('points',pts); arr.setAttribute('fill','#60a5fa');
+    svg.appendChild(arr);
+
+    // Distance label
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',mx-22); rect.setAttribute('y',my-11);
+    rect.setAttribute('width','44'); rect.setAttribute('height','16');
+    rect.setAttribute('rx','4'); rect.setAttribute('fill','#1a2332');
+    rect.setAttribute('stroke','#1e2d42');
+    svg.appendChild(rect);
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',mx); txt.setAttribute('y',my+1);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('fill','#60a5fa'); txt.setAttribute('font-size','10');
+    txt.setAttribute('font-family','Space Mono,monospace');
+    txt.textContent=`${km} km`;
+    svg.appendChild(txt);
+
+    // Order numbers on each bin
+    const num=document.createElementNS('http://www.w3.org/2000/svg','text');
+    num.setAttribute('x',x1-14); num.setAttribute('y',y1-12);
+    num.setAttribute('fill','#e2e8f0'); num.setAttribute('font-size','11');
+    num.setAttribute('font-family','Space Mono,monospace'); num.setAttribute('font-weight','bold');
+    num.textContent=`${i+1}`;
+    svg.appendChild(num);
+  }
+  // Last bin number
+  const last=bins.find(b=>b.id===selectedMapBins[selectedMapBins.length-1]);
+  if(last){
+    const n=document.createElementNS('http://www.w3.org/2000/svg','text');
+    n.setAttribute('x',last.x*W/100-14); n.setAttribute('y',last.y*H/100-12);
+    n.setAttribute('fill','#e2e8f0'); n.setAttribute('font-size','11');
+    n.setAttribute('font-family','Space Mono,monospace'); n.setAttribute('font-weight','bold');
+    n.textContent=`${selectedMapBins.length}`;
+    svg.appendChild(n);
+  }
+  const info=document.getElementById('map-route-info');
+  if(info) info.textContent=`Route: ${selectedMapBins.join(' → ')} · Total: ${totalKm.toFixed(2)} km`;
+}
+
+function renderBarChartZone(){
+  const zoneData=[
+    {zone:'Anna Nagar',val:80},{zone:'T. Nagar',val:65},{zone:'Adyar',val:94},
+    {zone:'Tambaram',val:100},{zone:'Velachery',val:45},{zone:'Guindy',val:55},
+    {zone:'Mylapore',val:88},{zone:'Perambur',val:91},{zone:'Chromepet',val:78}
+  ];
+  const c=document.getElementById('bar-chart-zone');
+  if(!c) return;
+  c.innerHTML=zoneData.map(({zone,val})=>{
+    const col=val>=90?'var(--red)':val>=70?'var(--yellow)':'var(--green)';
+    const textCol=val>=50?'#000':'var(--text2)';
+    return `<div class="hbar-row">
+      <div class="hbar-label">${zone}</div>
+      <div class="hbar-track">
+        <div class="hbar-fill" style="width:${val}%;background:${col};">
+          <span style="color:${val>20?'#000':'transparent'}">${val}%</span>
+        </div>
+      </div>
+      <div class="hbar-val" style="color:${col}">${val}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderBarChartHourly(){
+  const hours=['6AM','7AM','8AM','9AM','10AM','12PM','2PM','4PM','6PM','8PM'];
+  const vals=[0,1,2,3,5,4,2,6,8,3];
+  const c=document.getElementById('bar-chart-hourly');
+  if(!c) return;
+  const max=Math.max(...vals)||1;
+  const barH=112; // px space for bars
+  c.innerHTML=hours.map((h,i)=>{
+    const h_px=Math.max(2,Math.round((vals[i]/max)*barH));
+    const col=vals[i]>=6?'var(--red)':vals[i]>=3?'var(--yellow)':'var(--green)';
+    return `<div class="vbar-col">
+      <div class="vbar-val" style="color:${col}">${vals[i]||''}</div>
+      <div class="vbar-body" style="height:${h_px}px;background:${col};"></div>
+      <div class="vbar-label">${h}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCollectorRoute(){
+  const r=document.getElementById('collector-route');
+  if(!r) return;
+  // Merge: collectorTasks (admin-resolved) first, then static route stops not already in tasks
+  const taskIds=new Set(collectorTasks.map(t=>t.binId));
+  const staticExtra=routeStops.filter(s=>!taskIds.has(s.binId));
+  const allStops=[
+    ...collectorTasks.map(t=>({binId:t.binId,location:t.location,type:t.type,fill:t.fill,priority:true,resolvedAt:t.resolvedAt,fromAdmin:true})),
+    ...staticExtra.map(s=>({...s,fromAdmin:false}))
+  ];
+  if(allStops.length===0){
+    r.innerHTML='<div class="empty-state"><div class="e-icon">✅</div><p>No bins assigned yet. Admin resolves alerts to dispatch bins here.</p></div>';
+    document.getElementById('coll-assigned').textContent=0;
+    document.getElementById('coll-done').textContent=emptiedBins.size;
+    return;
+  }
+  r.innerHTML=allStops.map((s,i)=>{
+    const done=emptiedBins.has(s.binId);
+    const currentFill=bins.find(b=>b.id===s.binId)?.fill??s.fill;
+    return `
+    <div class="route-stop" style="${done?'opacity:0.5':''}">
+      <div class="stop-num ${s.priority?'priority':''}">${done?'✓':(i+1)}</div>
+      <div class="stop-info">
+        <div class="stop-name">${s.binId} — ${s.location}</div>
+        <div class="stop-detail">${s.type} · Fill: <span style="color:${fillColor(done?0:currentFill)}">${done?0:currentFill}%</span>
+          ${s.priority?'· ⚡ Priority':''}
+          ${s.fromAdmin&&s.resolvedAt?`· <span style="color:var(--blue);font-size:11px;">Dispatched ${s.resolvedAt}</span>`:''}
+        </div>
+      </div>
+      <div class="stop-actions">
+        ${typeTag(s.type)}
+        <button class="empty-btn ${done?'done':''}" onclick="emptyBin('${s.binId}',this)" ${done?'disabled':''}>
+          ${done?'✓ Collected':'Collect'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('coll-assigned').textContent=allStops.length;
+  document.getElementById('coll-done').textContent=emptiedBins.size;
+}
+
+function updateMetrics(){
+  const full=bins.filter(b=>b.fill>=90).length;
+  const warn=bins.filter(b=>b.fill>=70&&b.fill<90).length;
+  const ok=bins.filter(b=>b.fill<70).length;
+  const ge=id=>document.getElementById(id);
+  if(ge('m-full')) ge('m-full').textContent=full;
+  if(ge('m-warn')) ge('m-warn').textContent=warn;
+  if(ge('m-ok')) ge('m-ok').textContent=ok;
+  const ab=ge('alert-badge');
+  const unread=alerts.filter(a=>!a.resolved).length;
+  if(ab) ab.textContent=unread;
+}
+
+// ==================== ACTIONS ====================
+function markCollecting(binId){
+  const b=bins.find(x=>x.id===binId);
+  if(b){b.status='collecting';renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();}
+  saveState();
+  showToast(`Collector dispatched to ${binId}`,'success');
+}
+
+function resolveAlert(id){
+  const a=alerts.find(x=>x.id===id);
+  if(a){
+    a.resolved=true;
+    a.resolvedAt=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    // Mark the bin as collecting
+    const b=bins.find(x=>x.id===a.bin);
+    if(b){ b.status='collecting'; b.updated='just now'; }
+    // Add to collector tasks if not already there
+    if(!collectorTasks.find(t=>t.binId===a.bin)){
+      collectorTasks.unshift({
+        binId:a.bin,
+        location:b?b.location:a.location,
+        type:b?b.type:a.type,
+        fill:b?b.fill:100,
+        priority:true,
+        resolvedAt:a.resolvedAt
+      });
+    }
+    updateMetrics();renderAlerts();
+    renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();
+    renderCollectorRoute();
+    showToast(`🚛 ${a.bin} assigned to collector. Collector notified!`,'success');
+  }
+  saveState();
+}
+
+function resolveAll(){
+  alerts.forEach(a=>{
+    if(!a.resolved){
+      a.resolved=true;
+      a.resolvedAt=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const b=bins.find(x=>x.id===a.bin);
+      if(b){ b.status='collecting'; b.updated='just now'; }
+      if(!collectorTasks.find(t=>t.binId===a.bin)){
+        collectorTasks.unshift({
+          binId:a.bin,
+          location:b?b.location:a.location,
+          type:b?b.type:a.type,
+          fill:b?b.fill:100,
+          priority:true,
+          resolvedAt:a.resolvedAt
+        });
+      }
+    }
+  });
+  updateMetrics();renderAlerts();
+  renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();
+  renderCollectorRoute();
+  saveState();
+  showToast(`🚛 All bins assigned to collector. Collector notified!`,'success');
+}
+
+function triggerAlert(){
+  const b=bins[Math.floor(Math.random()*bins.length)];
+  b.fill=100;b.status='full';
+  alerts.unshift({id:alertIdCounter++,bin:b.id,location:b.location,type:b.type,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),resolved:false,msg:`Bin reached 100% capacity`});
+  updateMetrics();renderAlerts();renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();
+  saveState();
+  showToast(`🔴 Alert! ${b.id} at ${b.location} is full!`,'alert');
+}
+
+function simulateFill(){
+  bins.forEach(b=>{if(b.fill<100){b.fill=Math.min(100,b.fill+Math.floor(Math.random()*15)+5);b.updated='just now';if(b.fill>=90)b.status='full';else if(b.fill>=70)b.status='warn';}});
+  renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();updateMetrics();
+  saveState();
+  showToast('Fill levels updated (IoT simulation)','success');
+}
+
+function changePin(role){
+  const input=document.getElementById('new-'+role+'-pin');
+  const val=input.value.trim();
+  if(!/^\d{4}$/.test(val)){showToast('PIN must be exactly 4 digits','alert');return;}
+  pins[role]=val;
+  input.value='';
+  saveState();
+  showToast(`✅ ${role==='admin'?'Admin':'Collector'} PIN updated successfully`,'success');
+}
+
+function lockSession(role){
+  sessions[role]=false;
+  if(role==='admin') sessions.admin=false;
+  updateNavLockIcons();
+  showToast(`🔒 ${role==='admin'?'Admin':'Collector'} session locked`,'success');
+}
+
+function resetAllData(){
+  if(!confirm('Reset ALL data to factory defaults? This cannot be undone.')) return;
+  localStorage.removeItem('bg_bins');
+  localStorage.removeItem('bg_alerts');
+  localStorage.removeItem('bg_alertCounter');
+  localStorage.removeItem('bg_emptied');
+  localStorage.removeItem('bg_pins');
+  localStorage.removeItem('bg_collectorTasks');
+  location.reload();
+}
+
+function toggleSetting(btn){btn.classList.toggle('on');}
+
+
+function emptyBin(binId,btn){
+  emptiedBins.add(binId);
+  const b=bins.find(x=>x.id===binId);
+  if(b){b.fill=0;b.status='ok';b.updated='just now';}
+  // Remove from collectorTasks so it won't show as collecting forever
+  collectorTasks=collectorTasks.filter(t=>t.binId!==binId);
+  renderCollectorRoute();
+  renderBinTable('dash-bin-table');
+  renderBinTable('all-bin-table',true);
+  renderMapMarkers();
+  updateMetrics();
+  saveState();
+  showToast(`✅ ${binId} emptied and reset to 0%`,'success');
+}
+
+// ==================== KIOSK ====================
+let kioskStep=0;
+let selectedCat='';
+let selectedCatIcon='';
+let kioskBinFill=22;
+let kioskBinId='BG-01';
+let classifiedItem=null;
+
+function kioskNext(step){
+  if(step===1){
+    // capacity check
+    const pct=kioskBinFill;
+    const full=pct>=90;
+    document.getElementById('k-full-alert').style.display=full?'block':'none';
+    document.getElementById('k-cap-pct').style.color=fillColor(pct);
+    if(full){
+      // trigger alert
+      const exists=alerts.find(a=>a.bin===kioskBinId&&!a.resolved);
+      if(!exists){
+        alerts.unshift({id:alertIdCounter++,bin:kioskBinId,location:`Kiosk Check`,type:'Various',time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),resolved:false,msg:`Bin is ${pct}% full — alert via kiosk`});
+        updateMetrics();renderAlerts();
+      }
+      showToast(`🔴 Alert sent! ${kioskBinId} is full. Municipal corp notified.`,'alert');
+      return;
+    }
+    goKioskStep(step);
+  } else {
+    goKioskStep(step);
+  }
+}
+
+function kioskBack(step){goKioskStep(step);}
+
+function goKioskStep(step){
+  document.querySelectorAll('.kiosk-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('kstep-'+step).classList.add('active');
+  for(let i=0;i<4;i++){
+    const ind=document.getElementById('step-ind-'+i);
+    ind.classList.remove('active','done');
+    if(i<step) ind.classList.add('done');
+    if(i===step) ind.classList.add('active');
+  }
+  kioskStep=step;
+  if(step===3){
+    kioskDisposalCount++;
+    updateKioskStats();
+    // update bin fill on disposal
+    const b=bins.find(x=>x.id===kioskBinId);
+    if(b&&b.fill<100){
+      b.fill=Math.min(100,b.fill+3);
+      b.updated='just now';
+      if(b.fill>=90) b.status='full';
+      else if(b.fill>=70) b.status='warn';
+      else b.status='ok';
+      // sync kiosk fill variable so Step 0 stays accurate
+      kioskBinFill=b.fill;
+    }
+    document.getElementById('dispose-summary').innerHTML=`
+      <div style="margin-bottom:8px;display:flex;justify-content:space-between;"><span style="color:var(--text2)">Bin</span><span style="font-family:var(--mono)">${kioskBinId}</span></div>
+      <div style="margin-bottom:8px;display:flex;justify-content:space-between;"><span style="color:var(--text2)">Fill after disposal</span><span style="color:${fillColor(kioskBinFill)};font-family:var(--mono)">${kioskBinFill}%</span></div>
+      <div style="margin-bottom:8px;display:flex;justify-content:space-between;"><span style="color:var(--text2)">Category</span><span>${selectedCatIcon} ${selectedCat}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--text2)">Item</span><span>${classifiedItem||'—'}</span></div>
+    `;
+    renderBinTable('dash-bin-table');renderBinTable('all-bin-table',true);renderMapMarkers();updateMetrics();
+    saveState();
+  }
+  // always refresh Step 0 capacity display to reflect latest fill
+  if(step===0){
+    refreshKioskCapacityDisplay();
+  }
+}
+
+function refreshKioskCapacityDisplay(){
+  const pct=kioskBinFill;
+  document.getElementById('k-cap-pct').textContent=pct+'%';
+  document.getElementById('k-cap-pct').style.color=fillColor(pct);
+  document.getElementById('k-cap-bar').style.width=pct+'%';
+  document.getElementById('k-cap-bar').style.background=fillColor(pct);
+  document.getElementById('k-cap-msg').textContent=pct>=90?'⚠️ Bin is full or near capacity.':'Space available. You can dispose your waste.';
+  document.getElementById('k-cap-icon').textContent=pct>=90?'🚫':'🗑️';
+  document.getElementById('k-full-alert').style.display='none';
+  document.querySelectorAll('.bin-chip').forEach(chip=>{
+    if(chip.classList.contains('selected')) chip.textContent=`${kioskBinId} (${pct}%)`;
+  });
+}
+
+function kioskReset(){
+  classifiedItem=null;selectedCat='';selectedCatIcon='';
+  document.getElementById('ai-result-wrap').style.display='none';
+  document.getElementById('k-next-1').disabled=true;
+  document.getElementById('k-next-2').disabled=true;
+  document.getElementById('item-search').value='';
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
+  goKioskStep(0);
+  if(selectedArea) applyAreaToBin();
+  else refreshKioskCapacityDisplay();
+}
+
+// ==================== KIOSK AREA / GPS ====================
+let selectedArea='';
+let kioskDisposalCount=0;
+
+const AREA_BIN_MAP={
+  'Anna Nagar':['BG-01'],
+  'T. Nagar':['BG-02'],
+  'Adyar':['BG-03'],
+  'Tambaram':['BG-04'],
+  'Velachery':['BG-05'],
+  'Chromepet':['BG-06'],
+  'Guindy':['BG-07'],
+  'Mylapore':['BG-08'],
+  'Nungambakkam':['BG-09'],
+  'Kodambakkam':['BG-10']
+};
+
+function selectArea(el,area){
+  selectedArea=area;
+  document.querySelectorAll('.area-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  applyAreaToBin();
+}
+
+function detectGPS(){
+  const btn=document.querySelector('.gps-btn');
+  if(btn) btn.textContent='📡 Detecting...';
+  // Simulate GPS detection (in a real app, use navigator.geolocation)
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      ()=>{
+        // Always resolve to Tambaram since user is in Tambaram
+        const detectedArea='Tambaram';
+        selectedArea=detectedArea;
+        document.querySelectorAll('.area-chip').forEach(c=>{
+          c.classList.toggle('selected',c.textContent.trim()===detectedArea);
+        });
+        applyAreaToBin();
+        if(btn) btn.textContent='📡 GPS Detected: '+detectedArea;
+        showToast('📍 Location detected: '+detectedArea,'success');
+      },
+      ()=>{
+        // Fallback simulation
+        const areas=Object.keys(AREA_BIN_MAP);
+        const detectedArea=areas[Math.floor(Math.random()*areas.length)];
+        selectedArea=detectedArea;
+        document.querySelectorAll('.area-chip').forEach(c=>{
+          c.classList.toggle('selected',c.textContent.trim()===detectedArea);
+        });
+        applyAreaToBin();
+        if(btn) btn.textContent='📡 GPS Detected: '+detectedArea+' (simulated)';
+        showToast('📍 Location simulated: '+detectedArea,'success');
+      }
+    );
+  } else {
+    const areas=Object.keys(AREA_BIN_MAP);
+    const detectedArea=areas[Math.floor(Math.random()*areas.length)];
+    selectedArea=detectedArea;
+    document.querySelectorAll('.area-chip').forEach(c=>{
+      c.classList.toggle('selected',c.textContent.trim()===detectedArea);
+    });
+    applyAreaToBin();
+    if(btn) btn.textContent='📡 GPS Detected: '+detectedArea+' (simulated)';
+  }
+}
+
+function applyAreaToBin(){
+  if(!selectedArea) return;
+  const binIds=AREA_BIN_MAP[selectedArea]||[];
+  const areaBins=binIds.map(id=>bins.find(b=>b.id===id)).filter(Boolean);
+  // Pick the first non-full bin, if all full pick first
+  let assignedBin=areaBins.find(b=>b.fill<90)||areaBins[0];
+  // Fallback: if area has no bin, pick nearest by name match
+  if(!assignedBin){
+    assignedBin=bins.find(b=>b.location.toLowerCase().includes(selectedArea.toLowerCase()))||bins[0];
+  }
+  kioskBinId=assignedBin.id;
+  kioskBinFill=assignedBin.fill;
+
+  // Update label
+  const label=document.getElementById('kiosk-bin-location-label');
+  if(label) label.textContent=`${selectedArea} · Bin ${assignedBin.id}`;
+
+  // Show bin content
+  const content=document.getElementById('kiosk-bin-content');
+  const noArea=document.getElementById('no-area-msg');
+  if(content) content.style.display='block';
+  if(noArea) noArea.style.display='none';
+  document.getElementById('k-next-0').disabled=false;
+
+  renderKioskBinChips();
+  refreshKioskCapacityDisplay();
+  renderKioskNearby(assignedBin);
+  updateKioskStats();
+
+  // If assigned bin is full, show nearest banner
+  if(assignedBin.fill>=90){
+    showNearestBinBanner(assignedBin);
+  } else {
+    const banner=document.getElementById('nearest-bin-banner');
+    if(banner) banner.style.display='none';
+  }
+}
+
+function showNearestBinBanner(fullBin){
+  const available=bins.filter(b=>b.id!==fullBin.id&&b.fill<90);
+  if(!available.length) return;
+  const nearest=available[Math.floor(Math.random()*available.length)];
+  const banner=document.getElementById('nearest-bin-banner');
+  if(banner){
+    banner.style.display='block';
+    banner.innerHTML=`⚠️ <strong>Your area bin is full.</strong> Nearest available bin: <strong>${nearest.id} — ${nearest.location}</strong> (${nearest.fill}% fill)`;
+  }
+}
+
+function renderKioskNearby(currentBin){
+  const wrap=document.getElementById('kiosk-nearby-bins');
+  if(!wrap) return;
+  // Show bins sorted by simulated proximity (just index order for demo)
+  const nearby=bins.filter(b=>b.id!==currentBin.id).slice(0,4);
+  const distances=['0.3 km','0.7 km','1.1 km','1.8 km'];
+  wrap.innerHTML=nearby.map((b,i)=>{
+    const col=b.fill>=90?'var(--red)':b.fill>=70?'var(--yellow)':'var(--green)';
+    const stat=b.fill>=90?'Full':'Available';
+    return `<div class="nearby-bin-item">
+      <div class="nearby-bin-dot" style="background:${col}"></div>
+      <div class="nearby-bin-info">
+        <div style="font-weight:600;">${b.id} — ${b.location.split(',')[0]}</div>
+        <div class="nearby-bin-dist">${distances[i]} · ${b.fill}% · ${stat}</div>
+      </div>
+      <div style="font-size:11px;color:${col};font-weight:600;">${stat}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateKioskStats(){
+  const avail=bins.filter(b=>b.fill<90).length;
+  const full=bins.filter(b=>b.fill>=90).length;
+  const da=document.getElementById('kiosk-stat-available');
+  const df=document.getElementById('kiosk-stat-full');
+  const dd=document.getElementById('kiosk-stat-disposals');
+  if(da) da.textContent=avail;
+  if(df) df.textContent=full;
+  if(dd) dd.textContent=kioskDisposalCount;
+}
+
+function renderKioskBinChips(){
+  const wrap=document.getElementById('kiosk-bin-chips');
+  if(!wrap) return;
+  const b=bins.find(x=>x.id===kioskBinId);
+  if(!b){ wrap.innerHTML=''; return; }
+  wrap.innerHTML=`<div class="bin-chip selected">${b.id} — ${b.fill>=100?'Full':b.fill+'%'}</div>`;
+}
+
+function selectKioskBin(id){
+  const b=bins.find(x=>x.id===id);
+  if(!b) return;
+  kioskBinId=id;
+  kioskBinFill=b.fill;
+  renderKioskBinChips();
+  refreshKioskCapacityDisplay();
+}
+
+function selectCategory(el,name,icon){
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCat=name; selectedCatIcon=icon;
+  document.getElementById('k-next-1').disabled=false;
+  const tagEl=document.getElementById('selected-cat-tag');
+  const map={'Dry Waste':'dry','Wet Waste':'wet','Medical Waste':'med','E-Waste':'ewaste'};
+  tagEl.className='tag '+(map[name]||'dry');
+  tagEl.textContent=name;
+}
+
+async function classifyItem(){
+  const item=document.getElementById('item-search').value.trim();
+  if(!item) return;
+  document.getElementById('ai-result-wrap').style.display='none';
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('k-next-2').disabled=true;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:`You are a smart waste classification assistant for BinGuard, an IoT waste management system used in Indian cities.
+
+The user selected category: "${selectedCat}"
+The user says they want to dispose: "${item}"
+
+Respond ONLY in this JSON format (no markdown, no extra text):
+{
+  "item": "cleaned item name",
+  "correct_category": "Dry Waste | Wet Waste | Medical Waste | E-Waste",
+  "category_matches": true or false,
+  "confidence": "High | Medium | Low",
+  "explanation": "1-2 sentence explanation in simple English"
+}`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content.map(c=>c.text||'').join('');
+    const clean=text.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    classifiedItem=parsed.item;
+    document.getElementById('ai-item-name').textContent=parsed.item;
+    document.getElementById('ai-cat-tag').textContent=parsed.correct_category;
+    const matches=parsed.category_matches;
+    document.getElementById('ai-match-badge').innerHTML=matches
+      ?'<span style="color:var(--green)">✓ Correct bin</span>'
+      :'<span style="color:var(--red)">✗ Wrong bin — please use '+parsed.correct_category+' bin</span>';
+    document.getElementById('ai-explanation').textContent=parsed.explanation;
+    document.getElementById('ai-result-wrap').style.display='block';
+    document.getElementById('k-next-2').disabled=!matches;
+    if(!matches) showToast(`Wrong bin! "${parsed.item}" goes in ${parsed.correct_category}`,'alert');
+    else showToast(`✓ Correct! Proceed to dispose.`,'success');
+    document.getElementById('ai-loading').style.display='none';
+  } catch(e){
+    // Fallback: local classification based on item keyword matching
+    const item = document.getElementById('item-search').value.trim();
+    const dryKeywords=['paper','plastic','bottle','glass','metal','can','cardboard','wrapper','bag','cup','foil','tin','newspaper','magazine','carton','box','packaging','tetra','polythene','polybag','styrofoam','rubber','leather','cloth','fabric','textile','rope','wood','furniture','ceramic','porcelain','mirror','tyre','rubber band','straw','pen','pencil','broken','crockery','thermocol'];
+    const wetKeywords=['food','fruit','vegetable','peel','leaf','leaves','grass','garden','compost','rice','bread','leftover','organic','liquid','juice','milk','water','soup','curry','dal','oil','coffee','tea','egg','meat','fish','chicken','rotten','spoiled','expired','cooked','raw','flour','dough','biscuit','cake','sweet','sugar','salt','spice','herb','flower','plant','soil','mud','sand','wet','moisture','drain','sewage','slurry','biogas','biodegradable','kitchen','cooking','food waste','vegetable peel','fruit peel','banana','apple','mango','orange','coconut','onion','potato','tomato','lemon'];
+    const medKeywords=['syringe','medicine','pill','tablet','bandage','gauze','mask','glove','needle','drug','prescription','capsule','injection','iv bag','saline','blood','urine','stool','sample','pathology','cotton','swab','ppe','hazmat','chemical','toxic','biohazard','antiseptic','ointment','cream','inhaler','surgical','hospital','clinic','covid','test kit','diagnostic','wipe','disinfectant'];
+    const ewKeywords=['battery','phone','cable','charger','laptop','computer','tv','electronic','wire','circuit','bulb','led','cfl','tube light','monitor','keyboard','mouse','printer','scanner','camera','radio','speaker','headphone','remote','switch','socket','plug','fuse','transformer','motor','fan','ac','refrigerator','washing machine','microwave','oven','iron','heater','mixer','grinder','blender','toaster','electric','semiconductor','chip','hard disk','cd','dvd','pen drive','memory card','router','modem','cctv','solar panel','inverter','ups'];
+    const lc=item.toLowerCase();
+    let detectedCat='Dry Waste';
+    // Check in priority order: Medical > E-Waste > Wet > Dry
+    if(medKeywords.some(k=>lc.includes(k))) detectedCat='Medical Waste';
+    else if(ewKeywords.some(k=>lc.includes(k))) detectedCat='E-Waste';
+    else if(wetKeywords.some(k=>lc.includes(k))) detectedCat='Wet Waste';
+    else if(dryKeywords.some(k=>lc.includes(k))) detectedCat='Dry Waste';
+    const matches = detectedCat === selectedCat;
+    document.getElementById('ai-item-name').textContent=item;
+    document.getElementById('ai-cat-tag').textContent=detectedCat;
+    document.getElementById('ai-match-badge').innerHTML=matches
+      ?'<span style="color:var(--green)">✓ Correct bin (offline mode)</span>'
+      :'<span style="color:var(--red)">✗ Wrong bin — please use '+detectedCat+' bin</span>';
+    document.getElementById('ai-explanation').textContent=matches
+      ?`"${item}" is correctly classified as ${detectedCat}.`
+      :`"${item}" belongs in the ${detectedCat} bin, not ${selectedCat}.`;
+    document.getElementById('ai-result-wrap').style.display='block';
+    document.getElementById('k-next-2').disabled=!matches;
+    if(!matches) showToast(`Wrong bin! "${item}" goes in ${detectedCat}`,'alert');
+    else showToast(`✓ Correct! Proceed to dispose.`,'success');
+    classifiedItem=item;
+    document.getElementById('ai-loading').style.display='none';
+  }
+}
+
+// ==================== CLOCK ====================
+function updateClock(){
+  const now=new Date();
+  const t=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const c=document.getElementById('kiosk-clock');
+  if(c) c.textContent=t;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// Date
+document.getElementById('coll-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+
+// ==================== INIT ====================
+function init(){
+  renderBinTable('dash-bin-table');
+  renderBinTable('all-bin-table',true);
+  renderAlerts();
+  renderMapMarkers();
+  renderBarChartZone();
+  renderBarChartHourly();
+  renderCollectorRoute();
+  updateMetrics();
+  updateKioskStats();
+
+  // Simulate live sensor updates every 30s
+  setInterval(()=>{
+    bins.forEach(b=>{
+      if(Math.random()<0.2){b.fill=Math.min(100,b.fill+Math.floor(Math.random()*8));b.updated='just now';if(b.fill>=90)b.status='full';else if(b.fill>=70)b.status='warn';}
+    });
+    renderBinTable('dash-bin-table');
+    renderBinTable('all-bin-table',true);
+    renderMapMarkers();
+    updateMetrics();
+    updateKioskStats();
+    saveState();
+  },30000);
+}
+init();
+</script>
+</body>
+</html>
