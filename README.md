@@ -134,20 +134,16 @@ README.md              # This file
 ##  Panels Overview
 
 ```
-┌─────────────────────────────────────────────┐
-│   BinGuard   [Home] [Kiosk] [Admin] [Collector]  Live │
-├─────────────────────────────────────────────┤
-│                                             │
-│  Home       → Landing page & feature list  │
-│  Kiosk      → Public bin disposal flow     │
-│  Admin    → Dashboard, analytics, alerts │
-│  Collector  → Route & collection tracker  │
-│                                             │
-└─────────────────────────────────────────────┘
++----------------------------------------------------------+
+|  BinGuard   [Home]  [Kiosk]  [Admin]  [Collector]  Live  |
++----------------------------------------------------------+
+|                                                          |
+|  Home        ->  Landing page & feature list             |
+|  Kiosk       ->  Public bin disposal flow                |
+|  Admin       ->  Dashboard, analytics, alerts            |
+|  Collector   ->  Route & collection tracker              |
+|                                                          |
++----------------------------------------------------------+
 ```
 
 ---
-
-##  License
-
-This project is open for personal and educational use. Attribution appreciated.
